@@ -1,0 +1,22 @@
+from sklearn.model_selection import cross_val_predict, GridSearchCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import StackingClassifier
+
+# Define base models
+base_estimators = [
+    ('rf', RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)),
+    ('et', ExtraTreesClassifier(n_estimators=100, max_depth=5, random_state=42)),
+    ('xgb', xgb.XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42))
+]
+
+# Meta-learner with hyperparameter tuning
+param_grid = {'C': [0.1, 1, 10]}
+meta_learner = GridSearchCV(LogisticRegression(max_iter=1000), param_grid, cv=5)
+
+# Stacking classifier with cross-validation
+stacking_clf = StackingClassifier(estimators=base_estimators, final_estimator=meta_learner, cv=5)
+stacking_clf.fit(X_train, y_train)
+
+# Evaluate stacked model
+y_pred = stacking_clf.predict(X_test)
+print("Advanced Stacking Classifier Accuracy:", accuracy_score(y_test, y_pred))

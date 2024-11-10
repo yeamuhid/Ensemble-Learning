@@ -1,0 +1,18 @@
+import xgboost as xgb
+import lightgbm as lgb
+from sklearn.ensemble import VotingClassifier
+
+# Initialize XGBoost and LightGBM models
+xgb_clf = xgb.XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=5, random_state=42)
+lgb_clf = lgb.LGBMClassifier(learning_rate=0.1, n_estimators=100, max_depth=5, random_state=42)
+
+# Voting classifier combining XGBoost and LightGBM
+voting_clf = VotingClassifier(estimators=[
+    ('xgb', xgb_clf),
+    ('lgb', lgb_clf)
+], voting='soft')  # 'soft' voting for probability averaging
+
+# Train and evaluate
+voting_clf.fit(X_train, y_train)
+y_pred = voting_clf.predict(X_test)
+print("Voting Classifier with Boosting Models Accuracy:", accuracy_score(y_test, y_pred))

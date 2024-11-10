@@ -1,0 +1,9 @@
+from sklearn.ensemble import GradientBoostingClassifier
+
+# Initialize and train model
+gb = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+gb.fit(X_train, y_train)
+
+# Make predictions and evaluate
+y_pred = gb.predict(X_test)
+print("Gradient Boosting Accuracy:", accuracy_score(y_test, y_pred))
